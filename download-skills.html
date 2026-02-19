@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Download Skills</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: #f4f6f9;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+      color: #fff;
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1rem;
+      opacity: 0.75;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e94560;
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 24px 64px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 28px 24px 24px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+      transform: translateY(-2px);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+    }
+
+    .icon-blue   { background: #e8f0fe; }
+    .icon-green  { background: #e6f4ea; }
+    .icon-orange { background: #fff3e0; }
+    .icon-purple { background: #f3e8fd; }
+    .icon-red    { background: #fce8e6; }
+    .icon-teal   { background: #e0f7fa; }
+
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: #666;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      background: #f0f0f0;
+      color: #555;
+    }
+
+    .size {
+      font-size: 0.78rem;
+      color: #999;
+      margin-left: auto;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 18px;
+      background: #0f3460;
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+      align-self: flex-start;
+    }
+
+    .btn-download:hover {
+      background: #e94560;
+    }
+
+    .btn-download svg {
+      flex-shrink: 0;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px 16px;
+      gap: 10px;
+      margin-bottom: 32px;
+      max-width: 420px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+    .search-bar input {
+      border: none;
+      outline: none;
+      font-size: 0.9rem;
+      color: #333;
+      width: 100%;
+      background: transparent;
+    }
+
+    .search-bar svg {
+      color: #aaa;
+      flex-shrink: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.8rem;
+      color: #aaa;
+      border-top: 1px solid #e8e8e8;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge">Resources</div>
+  <h1>Download Skills</h1>
+  <p>Browse and download skill guides, cheat sheets, and reference materials to accelerate your learning.</p>
+</header>
+
+<main>
+
+  <div class="search-bar">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" placeholder="Search skills…" id="searchInput" oninput="filterCards()" />
+  </div>
+
+  <div class="section-title">All Skills</div>
+
+  <div class="grid" id="skillsGrid">
+
+    <!-- Card 1 -->
+    <div class="card" data-name="r programming data analysis">
+      <div class="card-icon icon-blue">📊</div>
+      <h2>R Programming Fundamentals</h2>
+      <p>Core R syntax, data structures, control flow, and functions. Ideal for beginners stepping into data analysis.</p>
+      <div class="card-meta">
+        <span class="tag">Beginner</span>
+        <span class="tag">R</span>
+        <span class="size">1.2 MB · PDF</span>
+      </div>
+      <a class="btn-download" href="#" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-name="data wrangling tidyverse dplyr tidyr">
+      <div class="card-icon icon-green">🧹</div>
+      <h2>Data Wrangling with Tidyverse</h2>
+      <p>Master <code>dplyr</code>, <code>tidyr</code>, and <code>readr</code> to clean, transform, and reshape datasets efficiently.</p>
+      <div class="card-meta">
+        <span class="tag">Intermediate</span>
+        <span class="tag">R</span>
+        <span class="size">980 KB · PDF</span>
+      </div>
+      <a class="btn-download" href="#" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-name="data visualization ggplot2 charts graphs">
+      <div class="card-icon icon-orange">📈</div>
+      <h2>Data Visualization with ggplot2</h2>
+      <p>Build compelling charts and graphs using the Grammar of Graphics. Covers scatter plots, bar charts, heatmaps, and more.</p>
+      <div class="card-meta">
+        <span class="tag">Intermediate</span>
+        <span class="tag">R</span>
+        <span class="size">2.1 MB · PDF</span>
+      </div>
+      <a class="btn-download" href="#" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-name="statistics machine learning regression modelling">
+      <div class="card-icon icon-purple">🤖</div>
+      <h2>Statistical Modelling &amp; ML</h2>
+      <p>From linear regression to decision trees. Covers model evaluation, cross-validation, and package ecosystem.</p>
+      <div class="card-meta">
+        <span class="tag">Advanced</span>
+        <span class="tag">R</span>
+        <span class="size">3.4 MB · PDF</span>
+      </div>
+      <a class="btn-download" href="#" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card" data-name="rmarkdown reporting reproducible documents">
+      <div class="card-icon icon-teal">📝</div>
+      <h2>R Markdown &amp; Reporting</h2>
+      <p>Create reproducible reports, presentations, and dashboards that blend code, output, and narrative.</p>
+      <div class="card-meta">
+        <span class="tag">Beginner</span>
+        <span class="tag">R</span>
+        <span class="size">760 KB · PDF</span>
+      </div>
+      <a class="btn-download" href="#" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card" data-name="shiny web app interactive dashboard">
+      <div class="card-icon icon-red">🌐</div>
+      <h2>Building Shiny Web Apps</h2>
+      <p>Turn your R analysis into interactive web applications with Shiny — no web development experience needed.</p>
+      <div class="card-meta">
+        <span class="tag">Advanced</span>
+        <span class="tag">R · Shiny</span>
+        <span class="size">1.8 MB · PDF</span>
+      </div>
+      <a class="btn-download" href="#" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Download
+      </a>
+    </div>
+
+  </div>
+
+  <p id="noResults" style="display:none; color:#999; font-size:0.9rem;">No skills matched your search.</p>
+
+</main>
+
+<footer>
+  &copy; 2026 R Studio Skills Hub &mdash; All resources are for educational use.
+</footer>
+
+<script>
+  function filterCards() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('#skillsGrid .card');
+    let visible = 0;
+
+    cards.forEach(card => {
+      const text = card.dataset.name + ' ' + card.innerText.toLowerCase();
+      const match = text.includes(query);
+      card.style.display = match ? '' : 'none';
+      if (match) visible++;
+    });
+
+    document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+  }
+</script>
+
+</body>
+</html>
