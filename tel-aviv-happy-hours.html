@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Best Happy Hours in Tel Aviv</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:   #1a73e8;
+      --gold:   #f5a623;
+      --dark:   #0d1b2a;
+      --mid:    #1b3a5c;
+      --light:  #f7f9fc;
+      --card-bg:#ffffff;
+      --muted:  #6b7280;
+      --border: #e5e7eb;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--light);
+      color: var(--dark);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, #0d1b2a 0%, #1b3a5c 55%, #0f4c81 100%);
+      color: #fff;
+      text-align: center;
+      padding: 72px 24px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+    .hero h1 { font-size: 2.6rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 12px; }
+    .hero p  { font-size: 1rem; opacity: 0.75; max-width: 480px; margin: 0 auto 28px; line-height: 1.6; }
+    .hero-meta {
+      display: inline-flex;
+      gap: 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      padding: 10px 24px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .hero-meta span { opacity: 0.9; }
+
+    /* ── CONTROLS ── */
+    .controls {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 32px 24px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      flex: 1;
+      min-width: 220px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .search-box input {
+      border: none; outline: none; font-size: 0.9rem;
+      color: var(--dark); background: transparent; width: 100%;
+    }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filter-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+      color: var(--muted);
+    }
+    .filter-btn.active, .filter-btn:hover {
+      background: var(--dark);
+      color: #fff;
+      border-color: var(--dark);
+    }
+
+    /* ── GRID ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 24px 64px;
+    }
+    .results-count { font-size: 0.82rem; color: var(--muted); margin-bottom: 18px; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 22px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+    .card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.12); transform: translateY(-3px); }
+
+    .card-header {
+      padding: 22px 22px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .venue-icon {
+      width: 50px; height: 50px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .venue-icon.bar    { background: #fef3c7; }
+    .venue-icon.wine   { background: #fce7f3; }
+    .venue-icon.beer   { background: #ecfdf5; }
+    .venue-icon.rooftop{ background: #ede9fe; }
+    .venue-icon.bistro { background: #fff7ed; }
+    .venue-info { flex: 1; }
+    .venue-info h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+    .venue-neighborhood {
+      font-size: 0.78rem; color: var(--muted);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .rating {
+      display: flex; align-items: center; gap: 3px;
+      font-size: 0.78rem; font-weight: 700; color: var(--gold);
+      margin-left: auto;
+    }
+
+    .card-body { padding: 16px 22px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
+
+    .happy-hour-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+    .happy-hour-bar .time-icon { font-size: 1.2rem; }
+    .happy-hour-bar .time-label { font-size: 0.72rem; color: #16a34a; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .happy-hour-bar .time-value { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
+
+    .deal-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .deal-list li {
+      font-size: 0.85rem; color: #374151;
+      display: flex; align-items: baseline; gap: 7px;
+    }
+    .deal-list li::before { content: "•"; color: var(--gold); font-size: 1rem; flex-shrink: 0; }
+
+    .card-footer {
+      padding: 14px 22px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 0.71rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 20px;
+      background: #f3f4f6; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.4px;
+    }
+    .tag.featured { background: #fef3c7; color: #92400e; }
+    .map-link {
+      margin-left: auto;
+      font-size: 0.8rem; font-weight: 600;
+      color: var(--blue); text-decoration: none;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .map-link:hover { text-decoration: underline; }
+
+    /* ── TIPS BOX ── */
+    .tips-box {
+      background: linear-gradient(135deg, #0d1b2a, #1b3a5c);
+      color: #fff;
+      border-radius: 14px;
+      padding: 32px 28px;
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .tips-box h3 { grid-column: 1 / -1; font-size: 1.1rem; margin-bottom: 4px; }
+    .tip-item { display: flex; gap: 12px; align-items: flex-start; }
+    .tip-item .tip-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .tip-item p { font-size: 0.83rem; opacity: 0.8; line-height: 1.5; }
+
+    /* ── NO RESULTS ── */
+    #noResults { display: none; color: var(--muted); font-size: 0.9rem; padding: 20px 0; }
+
+    footer {
+      text-align: center; padding: 24px;
+      font-size: 0.78rem; color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.9rem; }
+      .hero-meta { flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="hero-emoji">🍹</span>
+  <h1>Best Happy Hours in Tel Aviv</h1>
+  <p>Sun, sea, and sunset drinks — your guide to the city's top deals on cocktails, beer, and wine.</p>
+  <div class="hero-meta">
+    <span>🗺️ Tel Aviv</span>
+    <span>🕔 Updated 2026</span>
+    <span>🍺 10 Venues</span>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="search-box">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="Search by name or neighborhood…" oninput="applyFilters()" />
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all"    onclick="setFilter(this)">All</button>
+    <button class="filter-btn"        data-filter="bar"    onclick="setFilter(this)">🍸 Bar</button>
+    <button class="filter-btn"        data-filter="wine"   onclick="setFilter(this)">🍷 Wine</button>
+    <button class="filter-btn"        data-filter="beer"   onclick="setFilter(this)">🍺 Beer</button>
+    <button class="filter-btn"        data-filter="rooftop"onclick="setFilter(this)">🌇 Rooftop</button>
+    <button class="filter-btn"        data-filter="bistro" onclick="setFilter(this)">🥂 Bistro</button>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<main>
+  <div class="results-count" id="resultsCount"></div>
+
+  <div class="grid" id="venueGrid">
+
+    <!-- 1. Bellboy Bar -->
+    <div class="card" data-type="bar" data-name="bellboy rothschild cocktails">
+      <div class="card-header">
+        <div class="venue-icon bar">🍸</div>
+        <div class="venue-info">
+          <h2>Bellboy Bar</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Rothschild Boulevard
+          </div>
+        </div>
+        <div class="rating">★ 4.8</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Sun – Thu &nbsp;|&nbsp; 17:00 – 20:00</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>50% off all signature cocktails</li>
+          <li>Craft beer from ₪18</li>
+          <li>House wine from ₪22 per glass</li>
+          <li>Complimentary bar snacks</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag featured">Featured</span>
+        <span class="tag">Cocktails</span>
+        <a class="map-link" href="https://maps.google.com/?q=Bellboy+Bar+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 2. Imperial Craft -->
+    <div class="card" data-type="bar" data-name="imperial craft cocktail bar hayarkon">
+      <div class="card-header">
+        <div class="venue-icon bar">🍹</div>
+        <div class="venue-info">
+          <h2>Imperial Craft Cocktail Bar</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            HaYarkon Street
+          </div>
+        </div>
+        <div class="rating">★ 4.7</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Daily &nbsp;|&nbsp; 16:00 – 19:00</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Classic cocktails for ₪32</li>
+          <li>2-for-1 on draft beers</li>
+          <li>Tapas sharing plates from ₪28</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Craft</span>
+        <span class="tag">Cocktails</span>
+        <a class="map-link" href="https://maps.google.com/?q=Imperial+Craft+Cocktail+Bar+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 3. Yoezer Wine Bar -->
+    <div class="card" data-type="wine" data-name="yoezer wine bar jaffa old city">
+      <div class="card-header">
+        <div class="venue-icon wine">🍷</div>
+        <div class="venue-info">
+          <h2>Yoezer Wine Bar</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Old Jaffa
+          </div>
+        </div>
+        <div class="rating">★ 4.9</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Sun – Fri &nbsp;|&nbsp; 17:00 – 19:30</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Israeli house wine ₪24 per glass</li>
+          <li>30% off cheese &amp; charcuterie boards</li>
+          <li>Sparkling wine from ₪30</li>
+          <li>Free olives with every order</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag featured">Featured</span>
+        <span class="tag">Wine</span>
+        <a class="map-link" href="https://maps.google.com/?q=Yoezer+Wine+Bar+Jaffa" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 4. Radio EPGB -->
+    <div class="card" data-type="bar" data-name="radio epgb florentin alternative indie">
+      <div class="card-header">
+        <div class="venue-icon bar">📻</div>
+        <div class="venue-info">
+          <h2>Radio EPGB</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Florentin
+          </div>
+        </div>
+        <div class="rating">★ 4.6</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Daily &nbsp;|&nbsp; 18:00 – 21:00</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Beer + shot combo ₪30</li>
+          <li>All spirits 40% off</li>
+          <li>Live DJ sets on weekends</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Alternative</span>
+        <span class="tag">Music</span>
+        <a class="map-link" href="https://maps.google.com/?q=Radio+EPGB+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 5. Spicehaus -->
+    <div class="card" data-type="bistro" data-name="spicehaus bistro wine florentin food">
+      <div class="card-header">
+        <div class="venue-icon bistro">🥂</div>
+        <div class="venue-info">
+          <h2>Spicehaus</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Florentin
+          </div>
+        </div>
+        <div class="rating">★ 4.5</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Sun – Thu &nbsp;|&nbsp; 16:30 – 19:30</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Wine + small plate for ₪55</li>
+          <li>Half-price craft beers on tap</li>
+          <li>Mezze board deals from ₪38</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Food</span>
+        <span class="tag">Wine</span>
+        <a class="map-link" href="https://maps.google.com/?q=Spicehaus+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 6. Teder.fm -->
+    <div class="card" data-type="rooftop" data-name="teder outdoor rooftop garden bar park">
+      <div class="card-header">
+        <div class="venue-icon rooftop">🌳</div>
+        <div class="venue-info">
+          <h2>Teder.fm</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            HaTachana / Neve Tzedek
+          </div>
+        </div>
+        <div class="rating">★ 4.7</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Daily &nbsp;|&nbsp; 17:00 – 20:00</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Frozen cocktails ₪28</li>
+          <li>Beer buckets (4 bottles) ₪70</li>
+          <li>Sunset drinks with sea breeze views</li>
+          <li>Free entrance before 21:00</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Outdoor</span>
+        <span class="tag">Music</span>
+        <a class="map-link" href="https://maps.google.com/?q=Teder+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 7. Gordon Beach Bar -->
+    <div class="card" data-type="rooftop" data-name="gordon beach bar sea sunset view">
+      <div class="card-header">
+        <div class="venue-icon rooftop">🌅</div>
+        <div class="venue-info">
+          <h2>Gordon Beach Bar</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Gordon Beach
+          </div>
+        </div>
+        <div class="rating">★ 4.4</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Daily &nbsp;|&nbsp; 16:00 – 18:30</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Frozen margaritas ₪30</li>
+          <li>Buy-one-get-one beachside beer</li>
+          <li>Cocktail pitchers from ₪90</li>
+          <li>Front-row Mediterranean sunset</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag featured">Sunset Spot</span>
+        <span class="tag">Beach</span>
+        <a class="map-link" href="https://maps.google.com/?q=Gordon+Beach+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 8. HaPoel Beer Garden -->
+    <div class="card" data-type="beer" data-name="hapoel craft beer garden sport pub">
+      <div class="card-header">
+        <div class="venue-icon beer">🍺</div>
+        <div class="venue-info">
+          <h2>HaPoel Beer Garden</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            City Center
+          </div>
+        </div>
+        <div class="rating">★ 4.5</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Sun – Thu &nbsp;|&nbsp; 15:00 – 19:00</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Israeli craft beers from ₪16</li>
+          <li>Pint + burger deal ₪62</li>
+          <li>24 rotating taps — no dupes</li>
+          <li>Sports screens for all games</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Craft Beer</span>
+        <span class="tag">Sports</span>
+        <a class="map-link" href="https://maps.google.com/?q=HaPoel+Beer+Garden+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 9. Dallal Bistro -->
+    <div class="card" data-type="bistro" data-name="dallal neve tzedek bistro wine french">
+      <div class="card-header">
+        <div class="venue-icon bistro">🥐</div>
+        <div class="venue-info">
+          <h2>Dallal Bistro</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Neve Tzedek
+          </div>
+        </div>
+        <div class="rating">★ 4.8</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Sun – Fri &nbsp;|&nbsp; 17:00 – 19:00</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>House wine ₪26 per glass</li>
+          <li>French bistro starters 35% off</li>
+          <li>Prosecco &amp; crostini ₪48 combo</li>
+          <li>Courtyard seating — enchanting vibe</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag featured">Featured</span>
+        <span class="tag">Bistro</span>
+        <a class="map-link" href="https://maps.google.com/?q=Dallal+Neve+Tzedek+Tel+Aviv" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+    <!-- 10. Port 5 -->
+    <div class="card" data-type="beer" data-name="port namal tel aviv craft beer sea">
+      <div class="card-header">
+        <div class="venue-icon beer">⚓</div>
+        <div class="venue-info">
+          <h2>Port 5 Bar</h2>
+          <div class="venue-neighborhood">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Tel Aviv Port (Namal)
+          </div>
+        </div>
+        <div class="rating">★ 4.6</div>
+      </div>
+      <div class="card-body">
+        <div class="happy-hour-bar">
+          <span class="time-icon">⏰</span>
+          <div>
+            <div class="time-label">Happy Hour</div>
+            <div class="time-value">Daily &nbsp;|&nbsp; 16:00 – 19:30</div>
+          </div>
+        </div>
+        <ul class="deal-list">
+          <li>Sea-view pints from ₪19</li>
+          <li>Cocktails 2-for-1 until 18:00</li>
+          <li>Complimentary peanuts &amp; pretzels</li>
+          <li>Open-air deck on the waterfront</li>
+        </ul>
+      </div>
+      <div class="card-footer">
+        <span class="tag">Waterfront</span>
+        <span class="tag">Beer</span>
+        <a class="map-link" href="https://maps.google.com/?q=Tel+Aviv+Port+Namal" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Map
+        </a>
+      </div>
+    </div>
+
+  </div><!-- /grid -->
+
+  <p id="noResults">No venues matched your search. Try a different keyword or filter.</p>
+
+  <!-- TIPS -->
+  <div class="tips-box">
+    <h3>🧠 Local Tips</h3>
+    <div class="tip-item">
+      <span class="tip-icon">📅</span>
+      <p>Sunday is the start of the Israeli work week — bars often offer extra deals to kick things off.</p>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🕐</span>
+      <p>Arrive early — happy hours in Tel Aviv fill up fast, especially along Rothschild Blvd.</p>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🚶</span>
+      <p>Florentin and Neve Tzedek are walkable — bar-hop your way through both neighborhoods.</p>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">💳</span>
+      <p>Most bars accept cards, but keep ₪50–100 cash handy for tips or street-food stops in between.</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  🍹 Tel Aviv Happy Hours Guide &nbsp;·&nbsp; Information is approximate — verify hours directly with venues &nbsp;·&nbsp; 2026
+</footer>
+
+<script>
+  let activeFilter = 'all';
+
+  function setFilter(btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    applyFilters();
+  }
+
+  function applyFilters() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const cards = document.querySelectorAll('#venueGrid .card');
+    let visible = 0;
+
+    cards.forEach(card => {
+      const typeMatch = activeFilter === 'all' || card.dataset.type === activeFilter;
+      const textMatch = (card.dataset.name + ' ' + card.innerText.toLowerCase()).includes(query);
+      const show = typeMatch && textMatch;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    document.getElementById('noResults').style.display = visible === 0 ? 'block' : 'none';
+    document.getElementById('resultsCount').textContent =
+      visible === 10 ? 'Showing all 10 venues' : `Showing ${visible} of 10 venues`;
+  }
+
+  applyFilters(); // init count
+</script>
+
+</body>
+</html>
